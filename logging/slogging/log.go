@@ -107,6 +107,7 @@ func (c *SlogAdapter) Infof(format string, args ...any) {
 	}
 }
 
+// Error logs the message at the ERROR level.
 func (c *SlogAdapter) Error(args ...interface{}) {
 	if c.Enabled(context.Background(), slog.LevelError) {
 		c.Log(context.Background(), slog.LevelError, fmt.Sprint(args...))
