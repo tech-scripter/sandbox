@@ -6,13 +6,14 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/tech-scripter/sandbox/env"
+	"github.com/tech-scripter/sandbox/logging"
 )
 
-type RLogger struct {
+type RlogAdapter struct {
 	*logrus.Entry
 }
 
-func New() *RLogger {
+func New() *RlogAdapter {
 	l := logrus.New()
 	if env.GetBool("LOG_JSON") {
 		l.Formatter = &logrus.JSONFormatter{
@@ -36,17 +37,17 @@ func New() *RLogger {
 		},
 	})
 
-	return &RLogger{logger}
+	return &RlogAdapter{logger}
 }
 
-func (r *RLogger) WithError(err error) logging.Logger {
-	return &RLogger{r.Logger.WithError(err)}
+func (r *RlogAdapter) WithError(err error) logging.Logger {
+	return &RlogAdapter{r.Logger.WithError(err)}
 }
 
-func (r *RLogger) Error(args ...interface{}) {
+func (r *RlogAdapter) Error(args ...interface{}) {
 	r.Logger.Error(args)
 }
 
-func (r *RLogger) Printf(format string, args ...interface{}) {
+func (r *RlogAdapter) Printf(format string, args ...interface{}) {
 	r.Logger.Printf(format, args)
 }
