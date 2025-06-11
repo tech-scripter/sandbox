@@ -23,10 +23,8 @@ jobs:
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
-          level: error
           go_version_file: go.mod
           reporter: github-pr-review
-          golangci_lint_version: 'v2.1.6'
           golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
       - name: Report suspicious constructs
         run: go vet ./...
