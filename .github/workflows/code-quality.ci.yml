@@ -25,6 +25,6 @@ jobs:
         with:
           go_version_file: go.mod
           reporter: github-pr-review
-          golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
+          golangci_lint_flags: "--timeout 10m"
       - name: Report suspicious constructs
         run: go vet ./...
