@@ -60,5 +60,6 @@ jobs:
       - name: misspell
         uses: reviewdog/action-misspell@v1.26.3
         with:
+          level: "warning"
           locale: "US"
 
