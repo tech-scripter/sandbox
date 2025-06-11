@@ -26,41 +26,7 @@ jobs:
           level: error
           go_version_file: go.mod
           reporter: github-pr-review
-          golangci_lint_version: 'v1.64.8'
+          golangci_lint_version: 'v2.1.6'
           golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
-
-  govet:
-    name: govet
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v4
-      - name: Config git with private repos
-        env:
-          GO_REPO_TOKEN: ${{ secrets.GO_REPO_TOKEN }}
-        run: |
-          git config --global url."https://${GO_REPO_TOKEN}:x-oauth-basic@github.com/".insteadOf https://github.com/
-      - name: govet
-        uses: reviewdog/action-golangci-lint@v2
-        with:
-          tool_name: govet
-          golangci_lint_flags: "--default none -E govet ./internal/..."
-
-  misspell:
-    name: misspell
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v4
-      - name: Config git with private repos
-        env:
-          GO_REPO_TOKEN: ${{ secrets.GO_REPO_TOKEN }}
-        run: |
-          git config --global url."https://${GO_REPO_TOKEN}:x-oauth-basic@github.com/".insteadOf https://github.com/
-      - name: misspell
-        uses: reviewdog/action-misspell@v1.26.3
-        with:
-          reporter: github-pr-review
-          level: "warning"
-          locale: "US"
-
+      - name: Report suspicious constructs
+        run: go vet ./...
