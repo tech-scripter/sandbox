@@ -8,7 +8,7 @@ on:
 
 jobs:
   golangci-lint:
-    name: runner / golangci-lint
+    name: golangci-lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
@@ -30,7 +30,7 @@ jobs:
           golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
 
   govet:
-    name: runner / govet
+    name: govet
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
