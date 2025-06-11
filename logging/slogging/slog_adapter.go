@@ -15,12 +15,18 @@ const (
 	LevelFatal = slog.Level(9)
 )
 
-var LevelNames = map[slog.Leveler]string{
-	LevelTrace: "TRACE",
-	LevelFatal: "FATAL",
-}
+var (
+	LevelNames = map[slog.Leveler]string{
+		LevelTrace: "TRACE",
+		LevelFatal: "FATAL",
+	}
 
-// SlogAdapter wraps slog.Logger to provide additional functionality.
+	exit = func(code int) {
+		os.Exit(code)
+	}
+)
+
+// SlogAdapter is an adapter for slog.Logger that implements the logging.Logger interface.
 type SlogAdapter struct {
 	*slog.Logger
 }
@@ -77,46 +83,64 @@ func New() *SlogAdapter {
 	return &SlogAdapter{logger}
 }
 
-// WithError automatically adds the error key and returns log.Logger
-func (c *SlogAdapter) WithError(err error) logging.Logger {
-	return &SlogAdapter{c.With("error", err)}
+// With adds key-value pairs to the logger and returns logging.Logger.
+func (s *SlogAdapter) With(groupName string, args ...any) logging.Logger {
+	if groupName != "" {
+		return &SlogAdapter{s.Logger.WithGroup(groupName).With(args...)}
+	}
+
+	return &SlogAdapter{s.Logger.With(args...)}
 }
 
-// Fatal logs the message and then exits the program.
-func (c *SlogAdapter) Fatal(msg string, args ...any) {
-	c.Log(context.Background(), LevelFatal, msg, args...)
-	os.Exit(1)
+// WithError automatically adds the error key and returns logging.Logger
+func (s *SlogAdapter) WithError(err error) logging.Logger {
+	return &SlogAdapter{s.Logger.With("error", err)}
 }
 
 // Trace logs the message at the TRACE level.
-func (c *SlogAdapter) Trace(msg string, args ...any) {
-	c.Log(context.Background(), LevelTrace, msg, args...)
+func (s *SlogAdapter) Trace(args ...interface{}) {
+	s.Logger.Log(context.Background(), LevelTrace, fmt.Sprint(args...))
+}
+
+// Debug logs the message at the DEBUG level.
+func (s *SlogAdapter) Debug(args ...interface{}) {
+	s.Logger.Debug(fmt.Sprint(args...))
 }
 
 // Debugf logs the message at the DEBUG level using a formatted string.
-func (c *SlogAdapter) Debugf(format string, args ...any) {
-	if c.Enabled(context.Background(), slog.LevelDebug) {
-		c.Log(context.Background(), slog.LevelDebug, fmt.Sprintf(format, args...))
-	}
+func (s *SlogAdapter) Debugf(format string, args ...any) {
+	s.Logger.Log(context.Background(), slog.LevelDebug, fmt.Sprintf(format, args...))
+}
+
+// Info logs the message at the INFO level.
+func (s *SlogAdapter) Info(args ...interface{}) {
+	s.Logger.Info(fmt.Sprint(args...))
 }
 
 // Infof logs the message at the INFO level using a formatted string.
-func (c *SlogAdapter) Infof(format string, args ...any) {
-	if c.Enabled(context.Background(), slog.LevelInfo) {
-		c.Log(context.Background(), slog.LevelInfo, fmt.Sprintf(format, args...))
-	}
+func (s *SlogAdapter) Infof(format string, args ...any) {
+	s.Logger.Log(context.Background(), slog.LevelInfo, fmt.Sprintf(format, args...))
 }
 
 // Error logs the message at the ERROR level.
-func (c *SlogAdapter) Error(args ...interface{}) {
-	if c.Enabled(context.Background(), slog.LevelError) {
-		c.Log(context.Background(), slog.LevelError, fmt.Sprint(args...))
-	}
+func (s *SlogAdapter) Error(args ...interface{}) {
+	s.Logger.Error(fmt.Sprint(args...))
+}
+
+// Fatal logs the message and then exits the program.
+func (s *SlogAdapter) Fatal(args ...interface{}) {
+	s.Logger.Log(context.Background(), LevelFatal, fmt.Sprint(args...))
+	exit(1)
+}
+
+// Log logs a message at the specified level with context.
+func (s *SlogAdapter) Log(ctx context.Context, level int, msg string, args ...any) {
+	s.Logger.With(args...).Log(ctx, slog.Level(level), msg)
 }
 
 // Printf logs the message at the INFO level using a formatted string.
-func (c *SlogAdapter) Printf(format string, args ...interface{}) {
-	c.Infof(format, args...)
+func (s *SlogAdapter) Printf(format string, args ...interface{}) {
+	s.Infof(format, args...)
 }
 
 // parseLevel parses a string into a slog.Level.
