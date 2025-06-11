@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/tech-scripter/sandbox/env"
-	"github.com/tech-scripter/sandbox/logging"
+	"github.com/tech-scripter/sandbox/internal/logging"
 )
 
 const (

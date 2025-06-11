@@ -8,7 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/tech-scripter/sandbox/env"
-	"github.com/tech-scripter/sandbox/logging"
+	"github.com/tech-scripter/sandbox/internal/logging"
 )
 
 // RlogAdapter is an adapter for logrus that implements the logging.Logger interface.
