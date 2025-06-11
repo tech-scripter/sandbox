@@ -14,10 +14,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Config git with private repos
+        env:
+          GO_REPO_TOKEN: ${{ secrets.GO_REPO_TOKEN }}
+        run: |
+          git config --global url."https://${GO_REPO_TOKEN}:x-oauth-basic@github.com/".insteadOf https://github.com/
       - name: Run Linter
         uses: reviewdog/action-golangci-lint@v2
         with:
-          github_token: '${{ secrets.GO_REPO_TOKEN }}'
           go_version_file: go.mod
           golangci_lint_version: 'v1.64.8'
           golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
