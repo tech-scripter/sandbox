@@ -23,7 +23,6 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2
         with:
           go_version_file: go.mod
-          golangci_lint_version: v1.64.8
           golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
           reporter: github-pr-review
           level: error
