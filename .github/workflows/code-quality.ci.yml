@@ -1,4 +1,4 @@
-name: Rabbit Quality Gate (Linter & Test & SonarCloud)
+name: tech-scripter
 
 on:
   pull_request:
