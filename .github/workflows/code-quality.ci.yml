@@ -1,4 +1,4 @@
-name: Rabbit Quality Gate [Linter & Test & SonarCloud]
+name: tech-scripter
 
 on:
   pull_request:
@@ -7,25 +7,20 @@ on:
       - master
 
 jobs:
-  linter:
+  golangci-lint:
+    name: golangci-lint
     runs-on: ubuntu-latest
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Config git with private repos
-        env:
-          GO_REPO_TOKEN: ${{ secrets.GO_REPO_TOKEN }}
-        run: |
-          git config --global url."https://${GO_REPO_TOKEN}:x-oauth-basic@github.com/".insteadOf https://github.com/
-      - name: Run Linter
+      - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v2
         with:
+          level: info
+          fail_level: error
           go_version_file: go.mod
-          golangci_lint_version: v1.64.8
-          golangci_lint_flags: "--exclude-dirs-use-default --timeout 10m"
+          github_token: ${{ secrets.GO_REPO_TOKEN }}
           reporter: github-pr-review
-          level: error
+          golangci_lint_flags: "--timeout 10m"
       - name: Report suspicious constructs
         run: go vet ./...
