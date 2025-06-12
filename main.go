@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// selept
 func main() {
+	message := "test"
 	fmt.Print("test")
 }
